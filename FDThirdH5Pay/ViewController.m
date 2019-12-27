@@ -14,6 +14,9 @@
 
 @property (strong, nonatomic) WKWebView *myWebView;
 
+@property (weak, nonatomic) IBOutlet UITextField *tf;
+
+
 @end
 
 @implementation ViewController
@@ -28,11 +31,20 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    [self test1];
+}
+
+- (IBAction)bb_click:(UIButton *)sender {
+    [self.view endEditing:true];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:_tf.text]];
+}
+
+- (void) test1 {
     self.myWebView = [[WKWebView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height)];
     self.myWebView.navigationDelegate = self;
     [self.view addSubview:self.myWebView];
-    //加载h5链接
-    NSURL *url = [NSURL URLWithString:@"http://m.epicc.com.cn"];
+    //加载h5链接 http://m.epicc.com.cn
+    NSURL *url = [NSURL URLWithString:@"http://pay.epicc.com.cn/s3-modules-gateway/wx/wxWapPay.action?rdseq=JFCD-SZ201911291815510141873&displayorderinfo=1&sign=7697adb68baf25644f0c849aac5f4fab"];
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     [self.myWebView loadRequest:request];
 }
@@ -58,14 +70,17 @@
         [self openUrl:navigationAction.request.URL];
         decisionHandler(WKNavigationActionPolicyCancel);
     }
-    else if ([url containsString:@"https://wx.tenpay.com/cgi-bin/mmpayweb-bin/checkmweb?"] && !hasReferer ) {
+    else if ([url containsString:@"http://pay.epicc.com"] && !hasReferer ) {
+        //https://wx.tenpay.com/cgi-bin/mmpayweb-bin/checkmweb?
         //  发起微信支付后先到这里 我们要做的是设置Referer这个参数,解决回调到safari 浏览器，而不是APP 问题。。（借助URL Scheme 唤起APP 相关知识）
         NSURLRequest *request = navigationAction.request;
         NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] init];
         newRequest.allHTTPHeaderFields = request.allHTTPHeaderFields;
 #warning scheme 要改
         //Referer这个参数。value值是在H5开发者中心填写的一级域名，不要加 http,记得加://
-        [newRequest setValue:@"www.pay.epicc.com://" forHTTPHeaderField: @"Referer"];
+        //  www.pay.epicc.com://
+        //  https://api.fangdongtech.com/ul/
+        [newRequest setValue:@"www.api.fangdongtech.com://" forHTTPHeaderField: @"Referer"];
         newRequest.URL = request.URL;
         //修改完成之后加载
         [webView loadRequest:newRequest];

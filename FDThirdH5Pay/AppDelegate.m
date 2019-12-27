@@ -14,6 +14,8 @@
 
 @implementation AppDelegate
 
+//https://www.jianshu.com/p/90db7dfb075c
+//https://pay.weixin.qq.com/wiki/doc/api/H5.php?chapter=15_4
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
